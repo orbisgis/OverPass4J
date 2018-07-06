@@ -15,6 +15,8 @@ public class QueryTest {
         //Test subsets
         Node node = new Node(new Bbox(47, -3, 48, -2), "name=Vannes", "population");
         assertEquals("node[name=\"Vannes\"][population](47.0,-3.0,48.0,-2.0);", node.toString());
+        Node nodeNoBBox = new Node("name=Vannes", "population");
+        assertEquals("node[name=\"Vannes\"][population];", nodeNoBBox.toString());
         Way way = new Way(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "website");
         assertEquals("way[name=\"Vannes\"][website](47.0,-3.0,48.0,-2.0);", way.toString());
         Rel rel = new Rel(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "capital");
