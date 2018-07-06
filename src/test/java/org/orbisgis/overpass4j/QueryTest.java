@@ -74,7 +74,6 @@ public class QueryTest {
         shell.setProperty("map_to_area", new MapToArea());
         shell.setProperty("foreach", new ForEach());
 
-        String toStr = ".toString()";
         //Test subsets
         String node = "node(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"population\")";
         assertEquals("node[name=\"Vannes\"][population](47.0,-3.0,48.0,-2.0);", shell.evaluate(node).toString());
