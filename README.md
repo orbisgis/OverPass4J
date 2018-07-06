@@ -1,4 +1,4 @@
-# JOverPass
+# OverPass4J
 The library reproduce the OverPass API in JAVA/Groovy. This library is specially designed to improve the OverPass 
 request writing in Groovy.
 
