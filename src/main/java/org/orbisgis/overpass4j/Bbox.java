@@ -16,6 +16,8 @@
  */
 package org.orbisgis.overpass4j;
 
+import java.math.BigDecimal;
+
 /**
  * Specify the bounding box coordinate for the request
  *
@@ -74,6 +76,10 @@ public class Bbox {
      */
     public Bbox call(double s, double w, double n, double e){
         return new Bbox(s, w, n, e);
+    }
+
+    public Bbox call(BigDecimal s, BigDecimal w, BigDecimal n, BigDecimal e){
+        return new Bbox(s.doubleValue(), w.doubleValue(), n.doubleValue(), e.doubleValue());
     }
 
     public Bbox call(String str){
