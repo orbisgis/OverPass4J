@@ -110,11 +110,11 @@ public abstract class SubSet {
         StringBuilder str = new StringBuilder();
         str.append(operatorToString());
         str.append(objectType.name().toLowerCase());
-        if(bbox.isArea()) {
+        if(bbox != null && bbox.isArea()) {
             str.append(bboxToString());
         }
         str.append(filterToString());
-        if(!bbox.isArea()){
+        if(bbox != null && !bbox.isArea()){
             str.append(bboxToString());
         }
         str.append(aliasToString());
