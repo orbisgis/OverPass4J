@@ -61,21 +61,19 @@ public abstract class SubSet {
         }
     }
 
-    @Override
-    public String toString(){
-        StringBuilder str = new StringBuilder();
+    private String operatorToString(){
         switch(operator){
             case DIFFERENCE:
-                str.append("-");
-                break;
+                return "-";
             case INTERSECT:
-                str.append(".");
-                break;
+                return ".";
+            default :
+                return "";
         }
-        str.append(objectType.name().toLowerCase());
-        if(bbox != null && bbox.isArea()){
-            str.append("(").append(bbox.toString()).append(")");
-        }
+    }
+
+    private String filterToString(){
+        StringBuilder str = new StringBuilder();
         for(Filter filter : filterList){
             boolean tagFound = false;
             for(String tag : RECURSE_TAGS){
@@ -84,23 +82,42 @@ public abstract class SubSet {
                 }
             }
             if(tagFound){
-                str.append("(");
-                str.append(filter.toString());
-                str.append(")");
+                str.append("(").append(filter.toString()).append(")");
             }
             else {
-                str.append("[");
-                str.append(filter.toString());
-                str.append("]");
+                str.append("[").append(filter.toString()).append("]");
             }
         }
-        if(bbox != null && !bbox.isArea()){
-            str.append("(").append(bbox.toString()).append(")");
+        return str.toString();
+    }
+
+    private String bboxToString(){
+        if(bbox != null){
+            return "("+bbox.toString()+")";
         }
+        return "";
+    }
+
+    private String aliasToString(){
         if(alias != null){
-            str.append("->.");
-            str.append(alias);
+            return "->."+alias;
         }
+        return "";
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append(operatorToString());
+        str.append(objectType.name().toLowerCase());
+        if(bbox.isArea()) {
+            str.append(bboxToString());
+        }
+        str.append(filterToString());
+        if(!bbox.isArea()){
+            str.append(bboxToString());
+        }
+        str.append(aliasToString());
         str.append(";");
         return str.toString();
     }
