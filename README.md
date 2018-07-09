@@ -329,6 +329,9 @@ query() format csv("::id", "amenity", "contact:website") dataSet set(...)
  
  The request can be executed by calling the method `execute(String filePath)` of the `Query` object, with the path of 
  the file where the data should be written.
+
+ Note : execute() will return an InputStream
+ 
  ###### Java
  ```java
  new Query(). ... .execute("path/of/the/file")
