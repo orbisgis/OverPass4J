@@ -124,15 +124,38 @@ public class Query {
         str.append(";");
         return str.toString();
     }
+    
+    
+    /**
+     * Execute the query and save the result into a file.
+     * If the file exists it will be removed
+     * @param filePath
+     * @return
+     * @throws IOException 
+     */
+     public boolean execute(String filePath) throws IOException {
+         return execute(filePath, true);
+     }
 
-    public boolean execute(String filePath) throws IOException {
+    /**
+     * Execute the query and save the result into a file
+     * @param filePath the path of the file
+     * @param removeFile true to remove the file, false 
+     * to append in an existing file.
+     * @return
+     * @throws IOException 
+     */
+    public boolean execute(String filePath, boolean removeFile) throws IOException {        
+        File file = new File(filePath);        
+        if(removeFile && file.exists()){
+            file.delete();
+        }
         URL url = new URL(API_URL + URLEncoder.encode(this.toString()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            File file = new File(filePath);
             OutputStream outStream = new FileOutputStream(file);
             byte[] buffer = new byte[8 * 1024];
             int bytesRead;
@@ -146,6 +169,11 @@ public class Query {
         return false;
     }
 
+    /**
+     * Execute the query and return an InputStream that contains the result
+     * @return
+     * @throws IOException 
+     */    
     public InputStream execute() throws IOException {
         URL url = new URL(API_URL + URLEncoder.encode(this.toString()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
