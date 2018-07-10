@@ -25,9 +25,9 @@ public class QueryTest {
         Way way = new Way(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "website");
         assertEquals("way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);", way.toString());
         Rel rel = new Rel(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "capital");
-        assertEquals("rel[name=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);", rel.toString());
+        assertEquals("rel[\"name\"=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);", rel.toString());
         Area area = new Area(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "historic");
-        assertEquals("area[name=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", area.toString());
+        assertEquals("area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", area.toString());
 
         //Test set
         Set set = new Set(node, way, rel, area);
