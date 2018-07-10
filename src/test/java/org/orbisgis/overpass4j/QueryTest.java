@@ -6,7 +6,10 @@ import org.orbisgis.overpass4j.outformat.CsvOutFormat;
 import org.orbisgis.overpass4j.outformat.JsonOutFormat;
 import org.orbisgis.overpass4j.set.*;
 
+import java.io.File;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class QueryTest {
 
@@ -14,22 +17,22 @@ public class QueryTest {
     public void javaQueryTest() {
         //Test subsets
         Node node = new Node(new Bbox(47, -3, 48, -2), "name=Vannes", "population");
-        assertEquals("node[name=\"Vannes\"][population](47.0,-3.0,48.0,-2.0);", node.toString());
+        assertEquals("node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);", node.toString());
         Node nodeNoBBox = new Node("name=Vannes", "population");
-        assertEquals("node[name=\"Vannes\"][population];", nodeNoBBox.toString());
+        assertEquals("node[\"name\"=\"Vannes\"][\"population\"];", nodeNoBBox.toString());
         Way way = new Way(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "website");
-        assertEquals("way[name=\"Vannes\"][website](47.0,-3.0,48.0,-2.0);", way.toString());
+        assertEquals("way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);", way.toString());
         Rel rel = new Rel(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "capital");
-        assertEquals("rel[name=\"Vannes\"][capital](47.0,-3.0,48.0,-2.0);", rel.toString());
+        assertEquals("rel[name=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);", rel.toString());
         Area area = new Area(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "historic");
-        assertEquals("area[name=\"Vannes\"][historic](47.0,-3.0,48.0,-2.0);", area.toString());
+        assertEquals("area[name=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", area.toString());
 
         //Test set
         Set set = new Set(node, way, rel, area);
-        assertEquals("(node[name=\"Vannes\"][population](47.0,-3.0,48.0,-2.0);" +
-                "way[name=\"Vannes\"][website](47.0,-3.0,48.0,-2.0);" +
-                "rel[name=\"Vannes\"][capital](47.0,-3.0,48.0,-2.0);" +
-                "area[name=\"Vannes\"][historic](47.0,-3.0,48.0,-2.0););", set.toString());
+        assertEquals("(node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);" +
+                "way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);" +
+                "rel[\"name\"=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);" +
+                "area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0););", set.toString());
 
         //Test request format
         assertEquals("[out:json];out;", new Query().format(new JsonOutFormat()).toString());
@@ -78,20 +81,20 @@ public class QueryTest {
 
         //Test subsets
         String node = "node(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"population\")";
-        assertEquals("node[name=\"Vannes\"][population](47.0,-3.0,48.0,-2.0);", shell.evaluate(node).toString());
+        assertEquals("node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(node).toString());
         String way = "way(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"website\")";
-        assertEquals("way[name=\"Vannes\"][website](47.0,-3.0,48.0,-2.0);", shell.evaluate(way).toString());
+        assertEquals("way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(way).toString());
         String rel = "rel(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"capital\")";
-        assertEquals("rel[name=\"Vannes\"][capital](47.0,-3.0,48.0,-2.0);", shell.evaluate(rel).toString());
+        assertEquals("rel[\"name\"=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(rel).toString());
         String area = "area(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"historic\")";
-        assertEquals("area[name=\"Vannes\"][historic](47.0,-3.0,48.0,-2.0);", shell.evaluate(area).toString());
+        assertEquals("area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(area).toString());
 
         //Test set
         String set = "set("+node+","+way+","+rel+","+area+");";
-        assertEquals("(node[name=\"Vannes\"][population](47.0,-3.0,48.0,-2.0);" +
-                "way[name=\"Vannes\"][website](47.0,-3.0,48.0,-2.0);" +
-                "rel[name=\"Vannes\"][capital](47.0,-3.0,48.0,-2.0);" +
-                "area[name=\"Vannes\"][historic](47.0,-3.0,48.0,-2.0););", shell.evaluate(set).toString());
+        assertEquals("(node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);" +
+                "way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);" +
+                "rel[\"name\"=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);" +
+                "area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0););", shell.evaluate(set).toString());
 
         //Test request format
         assertEquals("[out:json];out;", shell.evaluate("query() format json").toString());
