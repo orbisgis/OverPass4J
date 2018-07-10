@@ -156,7 +156,7 @@ public class Query {
         connection.setRequestMethod("GET");
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            OutputStream outStream = new FileOutputStream(file);
+            OutputStream outStream = new FileOutputStream(file, true);
             byte[] buffer = new byte[8 * 1024];
             int bytesRead;
             while ((bytesRead = connection.getInputStream().read(buffer)) != -1) {

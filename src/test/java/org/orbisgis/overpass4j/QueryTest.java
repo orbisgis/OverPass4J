@@ -141,14 +141,14 @@ public class QueryTest {
         
         String filePath = "target/osm_data.json";   
         //Create the file
-        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute " + filePath);
+        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute \"" + filePath+"\"");
         Assert.assertTrue(new File(filePath).exists());
         //Append in an existing file
-        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute(" + filePath+ ", false)");
+        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute(\"" + filePath+ "\", false)");
 
         filePath = "target/osm_data2.json";
         //Create the file
-        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute(" + filePath+ ", false)");
+        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute(\"" + filePath+ "\", false)");
         Assert.assertTrue(new File(filePath).exists());
 
     }
