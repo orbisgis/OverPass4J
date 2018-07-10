@@ -329,6 +329,9 @@ query() format csv("::id", "amenity", "contact:website") dataSet set(...)
  
  The request can be executed by calling the method `execute(String filePath)` of the `Query` object, with the path of 
  the file where the data should be written.
+
+ Note : execute() will return an InputStream
+ 
  ###### Java
  ```java
  new Query(). ... .execute("path/of/the/file")
@@ -366,3 +369,38 @@ out meta;
     out meta 
     execute "path/of/the/file"
  ```
+ 
+ 
+ ### Groovy scripts
+ 
+ This example shows how to save in a json file all the ways with the tag highway.
+ ```groovy
+ @GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
+@Grab(group='org.orbisgis', module='overpass4j', version='1.0-SNAPSHOT')
+
+import static org.orbisgis.overpass4j.Out.*
+import static  org.orbisgis.overpass4j.OP4JObjects.*
+
+def bbox_osm= bbox(47.65799702121347,-2.756415009498596,47.65963017480206,-2.7535852789878845)
+
+//Get road features
+query() format json timeout 900 dataSet set(way(bbox_osm,"highway")) out meta execute "/tmp/fileOSM.json"
+println(new File("/tmp/fileOSM.json").text);
+ ```
+ 
+  This example shows how to count all node, way and relation buildings and save the result in a CSV file.
+  
+  ```groovy
+ @GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
+@Grab(group='org.orbisgis', module='overpass4j', version='1.0-SNAPSHOT')
+
+import static org.orbisgis.overpass4j.Out.*
+import static  org.orbisgis.overpass4j.OP4JObjects.*
+
+def bbox_osm= bbox(47.65799702121347,-2.756415009498596,47.65963017480206,-2.7535852789878845)
+
+//Count the number of buildings for a specific area 
+request = query() format csv("::count", "::count:nodes", "::count:ways", "::count:relations") timeout 900 dataSet set(node(bbox_osm,"building=yes"),way(bbox_osm,"building=yes"),rel(bbox_osm,"building=yes")) out count execute "/tmp/fileOSM.csv"
+println(new File("/tmp/fileOSM.csv").text);
+ ```
+ 

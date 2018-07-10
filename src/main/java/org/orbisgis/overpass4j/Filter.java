@@ -69,22 +69,22 @@ public class Filter {
         String str = "";
         switch(operator){
             case NOT_EQUALS:
-                str+=key+"!=\""+value+"\"";
+                str+="\""+key+"\"!=\""+value+"\"";
                 break;
             case EQUALS:
-                str+=key+"=\""+value+"\"";
+                str+="\""+key+"\"=\""+value+"\"";
                 break;
             case NOT_REGEX:
-                str+=key+"!~\""+value+"\"";
+                str+="\""+key+"\"!~\""+value+"\"";
                 break;
             case REGEX:
-                str+=key+"~\""+value+"\"";
+                str+="\""+key+"\"~\""+value+"\"";
                 break;
             case NOT_EXISTS:
-                str+="!"+key;
+                str+="!"+"\""+key+"\"";
                 break;
             case EXISTS:
-                str+=key;
+                str+="\""+key+"\"";
                 break;
         }
         return str;
