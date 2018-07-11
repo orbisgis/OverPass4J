@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Sylvain PALOMINOS (UBS 2018)
@@ -127,11 +128,13 @@ public class Query {
     
     
     /**
-     * Execute the query and save the result into a file.
-     * If the file exists it will be removed
-     * @param filePath
-     * @return
-     * @throws IOException 
+     * Execute the query and save the result into a file. If the file exists the result will be appended
+     *
+     * @param filePath Path of the file where the result will be written.
+     *
+     * @return True if the result of the request has been successfully stored.
+     *
+     * @throws IOException Exception thrown in case of error during the http request.
      */
      public boolean execute(String filePath) throws IOException {
          return execute(filePath, true);
@@ -139,24 +142,23 @@ public class Query {
 
     /**
      * Execute the query and save the result into a file
-     * @param filePath the path of the file
-     * @param removeFile true to remove the file, false 
-     * to append in an existing file.
-     * @return
-     * @throws IOException 
+     *
+     * @param filePath Path of the file where the result will be written.
+     * @param append True to append to the file, false to replace the file content.
+     *
+     * @return True if the result of the request has been successfully stored.
+     *
+     * @throws IOException Exception thrown in case of error during the http request.
      */
-    public boolean execute(String filePath, boolean removeFile) throws IOException {        
-        File file = new File(filePath);        
-        if(removeFile && file.exists()){
-            file.delete();
-        }
-        URL url = new URL(API_URL + URLEncoder.encode(this.toString()));
+    public boolean execute(String filePath, boolean append) throws IOException {
+        File file = new File(filePath);
+        URL url = new URL(API_URL + URLEncoder.encode(this.toString(), StandardCharsets.UTF_8.toString()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            OutputStream outStream = new FileOutputStream(file, true);
+            OutputStream outStream = new FileOutputStream(file, append);
             byte[] buffer = new byte[8 * 1024];
             int bytesRead;
             while ((bytesRead = connection.getInputStream().read(buffer)) != -1) {
@@ -170,9 +172,11 @@ public class Query {
     }
 
     /**
-     * Execute the query and return an InputStream that contains the result
-     * @return
-     * @throws IOException 
+     * Execute the query and return an InputStream that contains the result.
+     *
+     * @return The inputStream of the http request.
+     *
+     * @throws IOException Exception thrown in case of error during the http request.
      */    
     public InputStream execute() throws IOException {
         URL url = new URL(API_URL + URLEncoder.encode(this.toString()));

@@ -1,8 +1,8 @@
 package org.orbisgis.overpass4j;
 
 import groovy.lang.GroovyShell;
-import java.io.File;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.orbisgis.overpass4j.outformat.CsvOutFormat;
 import org.orbisgis.overpass4j.outformat.JsonOutFormat;
@@ -11,9 +11,29 @@ import org.orbisgis.overpass4j.set.*;
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class QueryTest {
+
+    private GroovyShell shell;
+
+    @Before
+    public void init(){
+        shell = new GroovyShell(this.getClass().getClassLoader());
+        shell.setProperty("node", new Node());
+        shell.setProperty("way", new Way());
+        shell.setProperty("area", new Area());
+        shell.setProperty("rel", new Rel());
+        shell.setProperty("bbox", new Bbox(0, 0, 0, 0));
+        shell.setProperty("set", new Set());
+        shell.setProperty("query", new Query());
+        shell.setProperty("json", new JsonOutFormat());
+        shell.setProperty("csv", new CsvOutFormat());
+        shell.setProperty("skel", Out.skel);
+        shell.setProperty("recurseUp", new RecurseUp());
+        shell.setProperty("recurseDown", new RecurseDown());
+        shell.setProperty("map_to_area", new MapToArea());
+        shell.setProperty("foreach", new ForEach());
+    }
 
     @Test
     public void javaQueryTest() {
@@ -65,22 +85,6 @@ public class QueryTest {
     @Test
     public void groovyQueryTest() {
 
-        GroovyShell shell = new GroovyShell(this.getClass().getClassLoader());
-        shell.setProperty("node", new Node());
-        shell.setProperty("way", new Way());
-        shell.setProperty("area", new Area());
-        shell.setProperty("rel", new Rel());
-        shell.setProperty("bbox", new Bbox(0, 0, 0, 0));
-        shell.setProperty("set", new Set());
-        shell.setProperty("query", new Query());
-        shell.setProperty("json", new JsonOutFormat());
-        shell.setProperty("csv", new CsvOutFormat());
-        shell.setProperty("skel", Out.skel);
-        shell.setProperty("recurseUp", new RecurseUp());
-        shell.setProperty("recurseDown", new RecurseDown());
-        shell.setProperty("map_to_area", new MapToArea());
-        shell.setProperty("foreach", new ForEach());
-
         //Test subsets
         String node = "node(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"population\")";
         assertEquals("node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(node).toString());
@@ -122,36 +126,20 @@ public class QueryTest {
         //For Each tests
         assertEquals(".a map_to_area->.b;", shell.evaluate("map_to_area(\"a\")>>\"b\"").toString());
     }
-    
-    
+
     @Test
     public void groovyQueryExecuteFileTest() {
-        GroovyShell shell = new GroovyShell(this.getClass().getClassLoader());
-        shell.setProperty("node", new Node());
-        shell.setProperty("way", new Way());
-        shell.setProperty("area", new Area());
-        shell.setProperty("rel", new Rel());
-        shell.setProperty("bbox", new Bbox(0, 0, 0, 0));
-        shell.setProperty("set", new Set());
-        shell.setProperty("query", new Query());
-        shell.setProperty("json", new JsonOutFormat());
-        shell.setProperty("csv", new CsvOutFormat());
-        shell.setProperty("skel", Out.skel);
-        shell.setProperty("recurseUp", new RecurseUp());
-        shell.setProperty("recurseDown", new RecurseDown());
-        shell.setProperty("map_to_area", new MapToArea());
-        shell.setProperty("foreach", new ForEach());
-        
-        String filePath = "target/osm_data.json";   
+        String filePath = "target/osm_data.json";
+        String query = "query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute ";
         //Create the file
-        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute \"" + filePath+"\"");
+        shell.evaluate(query + "\"" +filePath + "\"");
         Assert.assertTrue(new File(filePath).exists());
         //Append in an existing file
-        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute(\"" + filePath+ "\", false)");
+        shell.evaluate(query + "(\"" + filePath+ "\", true)");
 
         filePath = "target/osm_data2.json";
         //Create the file
-        shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute(\"" + filePath+ "\", false)");
+        shell.evaluate(query + "(\"" + filePath+ "\", false)");
         Assert.assertTrue(new File(filePath).exists());
 
     }
