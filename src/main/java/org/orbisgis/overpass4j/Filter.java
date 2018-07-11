@@ -26,18 +26,13 @@ public class Filter {
     private String value;
     private Operator operator;
 
-    public enum Operator{EQUALS, NOT_EQUALS, EXISTS, NOT_EXISTS, REGEX, NOT_REGEX}
+    public enum Operator{EQUALS, NOT_EQUALS, EXISTS, NOT_EXISTS, REGEX, NOT_REGEX, SUP, SUP_EQ, INF, INF_EQ}
 
     public Filter(String filterStr){
         if(filterStr.contains("!=")){
             key = filterStr.split("!=")[0].replaceAll("\"", "");
             value = filterStr.split("!=")[1].replaceAll("\"", "");
             operator = Operator.NOT_EQUALS;
-        }
-        else if(filterStr.contains("=")){
-            key = filterStr.split("=")[0].replaceAll("\"", "");
-            value = filterStr.split("=")[1].replaceAll("\"", "");
-            operator = Operator.EQUALS;
         }
         else if(filterStr.contains("!~")){
             key = filterStr.split("!~")[0].replaceAll("\"", "");
@@ -54,6 +49,31 @@ public class Filter {
             value = null;
             operator = Operator.NOT_EXISTS;
         }
+        else if(filterStr.contains(">=")){
+            key = filterStr.split(">=")[0].replaceAll("\"", "");
+            value = filterStr.split(">=")[1].replaceAll("\"", "");
+            operator = Operator.SUP_EQ;
+        }
+        else if(filterStr.contains(">")){
+            key = filterStr.split(">")[0].replaceAll("\"", "");
+            value = filterStr.split(">")[1].replaceAll("\"", "");
+            operator = Operator.SUP;
+        }
+        else if(filterStr.contains("<=")){
+            key = filterStr.split("<=")[0].replaceAll("\"", "");
+            value = filterStr.split("<=")[1].replaceAll("\"", "");
+            operator = Operator.INF_EQ;
+        }
+        else if(filterStr.contains("<")){
+            key = filterStr.split("<")[0].replaceAll("\"", "");
+            value = filterStr.split("<")[1].replaceAll("\"", "");
+            operator = Operator.INF;
+        }
+        else if(filterStr.contains("=")){
+            key = filterStr.split("=")[0].replaceAll("\"", "");
+            value = filterStr.split("=")[1].replaceAll("\"", "");
+            operator = Operator.EQUALS;
+        }
         else {
             key = filterStr.replaceAll("\"", "");
             operator = Operator.EXISTS;
@@ -66,28 +86,19 @@ public class Filter {
 
     @Override
     public String toString(){
-        String str = "";
         switch(operator){
-            case NOT_EQUALS:
-                str+="\""+key+"\"!=\""+value+"\"";
-                break;
-            case EQUALS:
-                str+="\""+key+"\"=\""+value+"\"";
-                break;
-            case NOT_REGEX:
-                str+="\""+key+"\"!~\""+value+"\"";
-                break;
-            case REGEX:
-                str+="\""+key+"\"~\""+value+"\"";
-                break;
-            case NOT_EXISTS:
-                str+="!"+"\""+key+"\"";
-                break;
-            case EXISTS:
-                str+="\""+key+"\"";
-                break;
+            case NOT_EQUALS:    return"[\""+key+"\"!=\""+value+"\"]";
+            case EQUALS:        return"[\""+key+"\"=\""+value+"\"]";
+            case NOT_REGEX:     return"[\""+key+"\"!~\""+value+"\"]";
+            case REGEX:         return"[\""+key+"\"~\""+value+"\"]";
+            case NOT_EXISTS:    return"[!"+"\""+key+"\"]";
+            case EXISTS:        return"[\""+key+"\"]";
+            case SUP:           return "(if:t[\""+key+"\"]>"+value+")";
+            case SUP_EQ:        return "(if:t[\""+key+"\"]>="+value+")";
+            case INF:           return "(if:t[\""+key+"\"]<"+value+")";
+            case INF_EQ:        return "(if:t[\""+key+"\"]<="+value+")";
+            default:            return "";
         }
-        return str;
     }
 
     public Filter copy(){

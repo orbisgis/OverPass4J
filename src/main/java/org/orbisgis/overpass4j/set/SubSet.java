@@ -82,10 +82,10 @@ public abstract class SubSet {
                 }
             }
             if(tagFound){
-                str.append("(").append(filter.toString()).append(")");
+                str.append(filter.toString());
             }
             else {
-                str.append("[").append(filter.toString()).append("]");
+                str.append(filter.toString());
             }
         }
         return str.toString();
