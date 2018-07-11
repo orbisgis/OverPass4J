@@ -375,7 +375,7 @@ out meta;
  
  This example shows how to save in a json file all the ways with the tag highway.
  ```groovy
- @GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
+@GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
 @Grab(group='org.orbisgis', module='overpass4j', version='1.0-SNAPSHOT')
 
 import static org.orbisgis.overpass4j.Out.*
@@ -391,7 +391,7 @@ println(new File("/tmp/fileOSM.json").text);
   This example shows how to count all node, way and relation buildings and save the result in a CSV file.
   
   ```groovy
- @GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
+@GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
 @Grab(group='org.orbisgis', module='overpass4j', version='1.0-SNAPSHOT')
 
 import static org.orbisgis.overpass4j.Out.*
@@ -403,4 +403,19 @@ def bbox_osm= bbox(47.65799702121347,-2.756415009498596,47.65963017480206,-2.753
 request = query() format csv("::count", "::count:nodes", "::count:ways", "::count:relations") timeout 900 dataSet set(node(bbox_osm,"building=yes"),way(bbox_osm,"building=yes"),rel(bbox_osm,"building=yes")) out count execute "/tmp/fileOSM.csv"
 println(new File("/tmp/fileOSM.csv").text);
  ```
- 
+  This example shows how to count all node, way and relation buildings with a level tag greater than 0.
+  
+  ```groovy
+@GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
+@Grab(group='org.orbisgis', module='overpass4j', version='1.0-SNAPSHOT')
+
+import static org.orbisgis.overpass4j.Out.*
+import static  org.orbisgis.overpass4j.OP4JObjects.*
+
+def bbox_osm = bbox(47.627338817222,-2.7989387512207,47.679605072474,-2.706241607666)
+
+request = query() format csv("::count", "::count:nodes", "::count:ways", "::count:relations") timeout 300 dataSet set(node(bbox_osm,"building=yes", "building:levels>0" ),way(bbox_osm,"building=yes", "building:levels>0"),rel(bbox_osm,"building=yes","building:levels>0")) out count execute "/tmp/fileOSM.csv"
+
+println(new File("/tmp/fileOSM.csv").text);
+  
+  ```
