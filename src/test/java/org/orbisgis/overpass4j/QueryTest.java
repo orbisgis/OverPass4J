@@ -49,6 +49,12 @@ public class QueryTest {
         Area area = new Area(new Bbox(47.0, -3.0, 48.0, -2.0), "name=Vannes", "historic");
         assertEquals("area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", area.toString());
 
+        //Test comparison filter
+        Node compFilter = new Node(new Bbox(47, -3, 48, -2), "building:levels>=3", "building:levels<5");
+        assertEquals("node(if:t[\"building:levels\"]>=3)(if:t[\"building:levels\"]<5)(47.0,-3.0,48.0,-2.0);", compFilter.toString());
+        compFilter = new Node(new Bbox(47, -3, 48, -2), "building:levels>3", "building:levels<=5");
+        assertEquals("node(if:t[\"building:levels\"]>3)(if:t[\"building:levels\"]<=5)(47.0,-3.0,48.0,-2.0);", compFilter.toString());
+
         //Test set
         Set set = new Set(node, way, rel, area);
         assertEquals("(node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);" +
