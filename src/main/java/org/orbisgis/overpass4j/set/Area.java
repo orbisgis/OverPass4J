@@ -63,15 +63,6 @@ public class Area extends SubSet {
         }
     }
 
-    public Area(Operator operator, Bbox bbox, List<Filter> filterList){
-        this.objectType = ObjectType.AREA;
-        this.operator =operator;
-        this.bbox = bbox;
-        for(Filter filter : filterList){
-            this.filterList.add(filter.copy());
-        }
-    }
-
     public Area call(String ... filters){
         return new Area(filters);
     }

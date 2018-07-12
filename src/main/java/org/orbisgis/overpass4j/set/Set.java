@@ -47,6 +47,9 @@ public class Set {
     public Set minus(Set set){
         List<SubSet> subList = new ArrayList<>();
         for(SubSet subSet : subSetList){
+            subList.add(subSet.copy());
+        }
+        for(SubSet subSet : set.subSetList){
             SubSet sub = subSet.copy();
             if(sub.getOperator().equals(SubSet.Operator.UNION)){
                 sub.setOperator(SubSet.Operator.DIFFERENCE);
@@ -55,9 +58,6 @@ public class Set {
                 sub.setOperator(SubSet.Operator.UNION);
             }
             subList.add(sub);
-        }
-        for(SubSet subSet : set.getSubSetList().subList(1, set.getSubSetList().size())){
-            subList.add(subSet.copy());
         }
         return new Set(subList.toArray(new SubSet[]{}));
     }

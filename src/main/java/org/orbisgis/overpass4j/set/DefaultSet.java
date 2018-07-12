@@ -38,4 +38,16 @@ public class DefaultSet extends SubSet {
     public String toString(){
         return "."+alias+";";
     }
+
+    public DefaultSet call(){
+        return new DefaultSet();
+    }
+
+    public DefaultSet call(String alias){
+        return new DefaultSet(alias);
+    }
+
+    public DefaultSet call(SubSet set){
+        return new DefaultSet(set);
+    }
 }

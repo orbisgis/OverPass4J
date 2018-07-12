@@ -51,16 +51,16 @@ public class ForEach extends SubSet {
             str.append(".");
             str.append(inputSetAlias);
         }
-        str.append("{");
-        for(Query query : queries) {
-            query.format(null);
-            str.append(query.toString());
-        }
-        str.append("}");
         if(alias != null && !alias.isEmpty()){
             str.append("->.");
             str.append(alias);
         }
+        str.append("(");
+        for(Query query : queries) {
+            query.format(null);
+            str.append(query.toString());
+        }
+        str.append(")");
         str.append(";");
         return str.toString();
     }

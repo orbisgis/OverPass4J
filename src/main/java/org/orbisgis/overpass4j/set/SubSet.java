@@ -26,7 +26,7 @@ import java.util.List;
  * @author Sylvain PALOMINOS (UBS 2018)
  * @author Erwan Bocher (CNRS)
  */
-public abstract class SubSet {
+public abstract class SubSet extends Set{
 
     protected ObjectType objectType;
     protected Operator operator;
@@ -110,11 +110,8 @@ public abstract class SubSet {
         StringBuilder str = new StringBuilder();
         str.append(operatorToString());
         str.append(objectType.name().toLowerCase());
-        if(bbox != null && bbox.isArea()) {
-            str.append(bboxToString());
-        }
         str.append(filterToString());
-        if(bbox != null && !bbox.isArea()){
+        if(bbox != null){
             str.append(bboxToString());
         }
         str.append(aliasToString());

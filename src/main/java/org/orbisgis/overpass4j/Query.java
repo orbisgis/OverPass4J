@@ -31,8 +31,9 @@ import java.nio.charset.StandardCharsets;
  */
 public class Query {
 
-    private String API_URL = "http://overpass-api.de/api/interpreter?data=";
+    private static String DEFAULT_SERVER_URL = "http://overpass-api.de/api/interpreter?data=";
 
+    private String serverUrl = DEFAULT_SERVER_URL;
     private OutFormat format;
     private int timeout = -1;
     private int maxsize = -1;
@@ -54,6 +55,12 @@ public class Query {
         return new Query();
     }
 
+    public Query call(Set set) {
+        Query query = new Query();
+        query.dataSet(set);
+        return query;
+    }
+
     public Query timeout(int timeout) {
         this.timeout = timeout;
         return this;
@@ -66,11 +73,6 @@ public class Query {
 
     public Query dataSet(Set... set) {
         this.dataSet = set;
-        return this;
-    }
-
-    public Query out(String... outs){
-        this.outs = outs;
         return this;
     }
 
@@ -116,17 +118,17 @@ public class Query {
             }
         }
 
-        str.append("out");
         if(outs != null) {
+            str.append("out");
             for (String out : outs) {
                 str.append(" ").append(out);
             }
+            str.append(";");
         }
-        str.append(";");
         return str.toString();
     }
-    
-    
+
+
     /**
      * Execute the query and save the result into a file. If the file exists the result will be appended
      *
@@ -136,9 +138,42 @@ public class Query {
      *
      * @throws IOException Exception thrown in case of error during the http request.
      */
-     public boolean execute(String filePath) throws IOException {
-         return execute(filePath, true);
-     }
+    public boolean execute(String filePath) throws IOException {
+        return execute(filePath, true);
+    }
+
+
+    /**
+     * Execute the query and save the result into a file. If the file exists the result will be appended
+     *
+     * @param filePath Path of the file where the result will be written.
+     * @param serverUrl String representation of the URL of the server to use.
+     *
+     * @return True if the result of the request has been successfully stored.
+     *
+     * @throws IOException Exception thrown in case of error during the http request.
+     */
+    public boolean execute(String filePath, String serverUrl) throws IOException {
+        this.serverUrl = serverUrl;
+        return execute(filePath, true);
+    }
+
+
+    /**
+     * Execute the query and save the result into a file.
+     *
+     * @param filePath Path of the file where the result will be written.
+     * @param serverUrl String representation of the URL of the server to use.
+     * @param append True to append to the file, false to replace the file content.
+     *
+     * @return True if the result of the request has been successfully stored.
+     *
+     * @throws IOException Exception thrown in case of error during the http request.
+     */
+    public boolean execute(String filePath, boolean append, String serverUrl) throws IOException {
+        this.serverUrl = serverUrl;
+        return execute(filePath, append);
+    }
 
     /**
      * Execute the query and save the result into a file
@@ -152,7 +187,7 @@ public class Query {
      */
     public boolean execute(String filePath, boolean append) throws IOException {
         File file = new File(filePath);
-        URL url = new URL(API_URL + URLEncoder.encode(this.toString(), StandardCharsets.UTF_8.toString()));
+        URL url = new URL(serverUrl + URLEncoder.encode(this.toString(), StandardCharsets.UTF_8.toString()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
@@ -168,7 +203,17 @@ public class Query {
             outStream.close();
             return true;
         }
-        return false;
+        else{
+            OutputStream outStream = new FileOutputStream(file, append);
+            byte[] buffer = new byte[8 * 1024];
+            int bytesRead;
+            while ((bytesRead = connection.getErrorStream().read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            connection.getErrorStream().close();
+            outStream.close();
+            return false;
+        }
     }
 
     /**
@@ -179,7 +224,7 @@ public class Query {
      * @throws IOException Exception thrown in case of error during the http request.
      */    
     public InputStream execute() throws IOException {
-        URL url = new URL(API_URL + URLEncoder.encode(this.toString()));
+        URL url = new URL(serverUrl + URLEncoder.encode(this.toString(), StandardCharsets.UTF_8.toString()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
@@ -187,6 +232,8 @@ public class Query {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             return connection.getInputStream();
         }
-        return null;
+        else{
+            return connection.getErrorStream();
+        }
     }
 }
