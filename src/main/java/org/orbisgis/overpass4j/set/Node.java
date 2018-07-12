@@ -66,6 +66,10 @@ public class Node extends NRWSet {
         }
     }
 
+    public Node call(int identifier){
+        return new Node(identifier);
+    }
+
     public Node call(String ... filters){
         return new Node(filters);
     }
