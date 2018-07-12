@@ -415,12 +415,10 @@ import static  org.orbisgis.overpass4j.OP4JObjects.*
 def bbox_osm = bbox(47.627338817222,-2.7989387512207,47.679605072474,-2.706241607666)
 
 request = query() format csv("::count", "::count:nodes", "::count:ways", "::count:relations") timeout 300 dataSet set(node(bbox_osm,"building=yes", "building:levels>0" ),way(bbox_osm,"building=yes", "building:levels>0"),rel(bbox_osm,"building=yes","building:levels>0")) out count execute "/tmp/fileOSM.csv"
-
-println(new File("/tmp/fileOSM.csv").text);
-  
+println(new File("/tmp/fileOSM.csv").text);  
   ```
   
-    This example shows how to return all French external reference (key ref:INSEE), used in France to hold the municipality's number as defined by the Institut national de la statistique et des études économiques (INSEE)
+ This example shows how to return all French external reference (key ref:INSEE), used in France to hold the municipality's number as defined by the Institut national de la statistique et des études économiques (INSEE). 
   
   ```groovy
 @GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
@@ -433,7 +431,5 @@ def bbox_osm = bbox(41.1290213474951,-7.492675781249999,51.358061573190916,11.82
 
 request = query() format csv("ref:INSEE") timeout 300 dataSet set(node(bbox_osm,"ref:INSEE"),) out body execute "/tmp/fileOSM.csv"
 
-println(new File("/tmp/fileOSM.csv").text);
-
-  
+println(new File("/tmp/fileOSM.csv").text);  
   ```
