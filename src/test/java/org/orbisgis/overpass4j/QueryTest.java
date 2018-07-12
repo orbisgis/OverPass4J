@@ -29,6 +29,7 @@ public class QueryTest {
         shell.setProperty("json", new JsonOutFormat());
         shell.setProperty("csv", new CsvOutFormat());
         shell.setProperty("skel", Out.skel);
+        shell.setProperty("body", Out.body);
         shell.setProperty("recurseUp", new RecurseUp());
         shell.setProperty("recurseDown", new RecurseDown());
         shell.setProperty("map_to_area", new MapToArea());
@@ -64,7 +65,7 @@ public class QueryTest {
 
         //Test request format
         assertEquals("[out:json];out;", new Query().format(new JsonOutFormat()).toString());
-        assertEquals("[out:csv(::\"id\",amenity,contact:website)];out;",
+        assertEquals("[out:csv(::\"id\",\"amenity\",\"contact:website\")];out;",
                 new Query().format(new CsvOutFormat("::id", "amenity", "contact:website")).toString());
         assertEquals("[out:json][timeout:900][maxsize:1073741824];();out skel;",
                 new Query().format(new JsonOutFormat()).timeout(900).maxsize(1073741824)
@@ -110,7 +111,7 @@ public class QueryTest {
 
         //Test request format
         assertEquals("[out:json];out;", shell.evaluate("query() format json").toString());
-        assertEquals("[out:csv(::\"id\",amenity,contact:website)];out;",
+        assertEquals("[out:csv(::\"id\",\"amenity\",\"contact:website\")];out;",
                 shell.evaluate("query() format csv(\"::id\", \"amenity\", \"contact:website\")").toString());
         assertEquals("[out:json][timeout:900][maxsize:1073741824];();out skel;",
                 shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel").toString());

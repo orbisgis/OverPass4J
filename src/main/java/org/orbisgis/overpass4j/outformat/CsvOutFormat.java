@@ -94,11 +94,10 @@ public class CsvOutFormat implements OutFormat {
                 str.append(",");
             }
             if(fieldName.contains("::")){
-                str.append(fieldName.replace("::", "::\""));
-                str.append("\"");
+                str.append(fieldName.replace("::", "::\"")).append("\"");
             }
             else {
-                str.append(fieldName);
+                str.append("\"").append(fieldName).append("\"");
             }
         }
         return str.toString();
