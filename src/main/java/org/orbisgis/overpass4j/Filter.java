@@ -78,6 +78,10 @@ public class Filter {
             key = filterStr.replaceAll("\"", "");
             operator = Operator.EXISTS;
         }
+        key = key.trim();
+        if(value != null) {
+            value = value.trim();
+        }
     }
 
     public String getKey(){
