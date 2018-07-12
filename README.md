@@ -433,3 +433,19 @@ request = query() format csv("ref:INSEE") timeout 300 dataSet set(node(bbox_osm,
 
 println(new File("/tmp/fileOSM.csv").text);  
   ```
+  
+ This example shows a complex query to count the number of buildings equal to yes and with a building:levels greater than 0. The count operation is applied for each French external reference (key ref:INSEE and admin_level=8) at a specified area.
+  
+  ```groovy
+@GrabResolver(name='orbisgis', root='http://repo.orbisgis.org/')
+@Grab(group='org.orbisgis', module='overpass4j', version='1.0-SNAPSHOT')
+
+import static org.orbisgis.overpass4j.Out.*
+import static  org.orbisgis.overpass4j.OP4JObjects.*
+
+def bbox_osm = bbox(46.717268685073954,-5.240478515625,49.2032427441791,-0.4119873046875)
+
+request = query() format csv("ref:INSEE","name","::count","::count:nodes","::count:ways","::count:rels") dataSet rel(bbox_osm, "ref:INSEE", "admin_level=8"), map_to_area(), foreach(query(set(defaultSet("d"))).out(), query(set(rel(bbox("area"),"building=yes", "building:levels>0"), way(bbox("area"),"building=yes", "building:levels>0"), node(bbox("area"),"building=yes", "building:levels>0"))).out(count))>>"d" execute "/tmp/fileOSM.csv" 
+
+println(new File("/tmp/fileOSM.csv").text);  
+  ```
