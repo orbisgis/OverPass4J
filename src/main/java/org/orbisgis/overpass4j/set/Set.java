@@ -28,10 +28,21 @@ public class Set {
 
     protected List<SubSet> subSetList = new ArrayList<>();
     protected String alias;
+    private String subSetAlias;
 
-    public Set(SubSet... subSets){
+    public Set(String subSetAlias){
+        this.subSetAlias = subSetAlias;
+    }
+
+    public Set(SubSet subSet){
+        subSetList.add(subSet);
+    }
+
+    private Set(SubSet... subSets){
         subSetList.addAll(Arrays.asList(subSets));
     }
+
+    protected Set(){ }
 
     public Set plus(Set set){
         List<SubSet> subList = new ArrayList<>();
@@ -69,8 +80,15 @@ public class Set {
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder("(");
-        for(SubSet subSet : subSetList){
-            str.append(subSet.toString());
+        if(subSetAlias != null && !subSetAlias.isEmpty()){
+            str.append("\"").append(subSetAlias).append("\"");
+        }
+        else if(subSetList != null){
+            for (SubSet subSet : subSetList) {
+                if(subSet != null) {
+                    str.append(subSet.toString());
+                }
+            }
         }
         str.append(")");
         if(alias != null && !alias.isEmpty()){

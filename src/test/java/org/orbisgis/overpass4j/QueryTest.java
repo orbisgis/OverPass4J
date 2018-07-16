@@ -73,14 +73,10 @@ public class QueryTest {
         assertEquals("area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", area.toString());
 
         //Test set add and remove
-        Set set1 = new Set(new Node("name=Vannes", "population"), new Way("name=Vannes", "population"),
+        Set set1 = new Node("name=Vannes", "population").plus(new Way("name=Vannes", "population")).plus(
                 new Rel("name=Vannes", "population"));
-        Set set2 = new Set(new Node("name=Vannes", "historic"), new Way("name=Vannes", "historic"),
+        Set set2 = new Node("name=Vannes", "historic").plus(new Way("name=Vannes", "historic")).plus(
                 new Rel("name=Vannes", "historic"));
-        assertEquals("(node[\"name\"=\"Vannes\"][\"population\"];way[\"name\"=\"Vannes\"][\"population\"];" +
-                        "rel[\"name\"=\"Vannes\"][\"population\"];node[\"name\"=\"Vannes\"][\"historic\"];" +
-                        "way[\"name\"=\"Vannes\"][\"historic\"];rel[\"name\"=\"Vannes\"][\"historic\"];);",
-                set1.plus(set2).toString());
         assertEquals("(node[\"name\"=\"Vannes\"][\"population\"];way[\"name\"=\"Vannes\"][\"population\"];" +
                         "rel[\"name\"=\"Vannes\"][\"population\"];-node[\"name\"=\"Vannes\"][\"historic\"];" +
                         "-way[\"name\"=\"Vannes\"][\"historic\"];-rel[\"name\"=\"Vannes\"][\"historic\"];);",
@@ -98,7 +94,7 @@ public class QueryTest {
         assertEquals("node(if:t[\"building:levels\"]>3)(if:t[\"building:levels\"]<=5)(47.0,-3.0,48.0,-2.0);", compFilter.toString());
 
         //Test set
-        Set set = new Set(node, way, rel, area);
+        Set set = node.plus(way).plus(rel).plus(area);
         assertEquals("(node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);" +
                 "way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);" +
                 "rel[\"name\"=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);" +
@@ -109,10 +105,9 @@ public class QueryTest {
         assertEquals("[out:csv(::\"id\",\"amenity\",\"contact:website\")];out;",
                 new Query().format(new CsvOutFormat("::id", "amenity", "contact:website")).out().toString());
         assertEquals("[out:json][timeout:900][maxsize:1073741824];();out skel;",
-                new Query().format(new JsonOutFormat()).timeout(900).maxsize(1073741824)
-                        .dataSet(new Set()).out(Out.skel).toString());
-        assertEquals("[out:xml][bbox:25.0,6.02,28.68,7.85];();out;",  new Query().format(new XmlOutFormat())
-                .bbox(25.0, 6.02, 28.68, 7.85).dataSet(new Set()).out().toString());
+                new Query(new Set("")).format(new JsonOutFormat()).timeout(900).maxsize(1073741824).out(Out.skel).toString());
+        assertEquals("[out:xml][bbox:25.0,6.02,28.68,7.85];();out;",  new Query(new Set("")).format(new XmlOutFormat())
+                .bbox(25.0, 6.02, 28.68, 7.85).out().toString());
 
         //Recurse tests
         assertEquals("<;", new RecurseUp().toString());
@@ -134,7 +129,6 @@ public class QueryTest {
 
     @Test
     public void groovyQueryTest() {
-        //Test subsets
         //Test Node
         String node = "node(bbox(47.0,-3.0,48.0,-2.0),\"name=Vannes\", \"population\")";
         assertEquals("node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(node).toString());
@@ -154,17 +148,17 @@ public class QueryTest {
         assertEquals("area[\"name\"=\"Vannes\"][\"historic\"](47.0,-3.0,48.0,-2.0);", shell.evaluate(area).toString());
 
         //Test set add and remove
-        String set1 = "set(node(\"name=Vannes\", \"population\"), way(\"name=Vannes\", \"population\")," +
-                "rel(\"name=Vannes\", \"population\"))";
-        String set2 = "set(node(\"name=Vannes\", \"historic\"), way(\"name=Vannes\", \"historic\")," +
-                "rel(\"name=Vannes\", \"historic\"))";
+        String set1 = "node(\"name=Vannes\", \"population\")+way(\"name=Vannes\", \"population\")+" +
+                "rel(\"name=Vannes\", \"population\")";
+        String set2 = "node(\"name=Vannes\", \"historic\")+way(\"name=Vannes\", \"historic\")+" +
+                "rel(\"name=Vannes\", \"historic\")";
         assertEquals("(node[\"name\"=\"Vannes\"][\"population\"];way[\"name\"=\"Vannes\"][\"population\"];" +
                         "rel[\"name\"=\"Vannes\"][\"population\"];node[\"name\"=\"Vannes\"][\"historic\"];" +
                         "way[\"name\"=\"Vannes\"][\"historic\"];rel[\"name\"=\"Vannes\"][\"historic\"];);",
                 shell.evaluate(set1+"+"+set2).toString());
         assertEquals("(node[\"name\"=\"Vannes\"][\"population\"];way[\"name\"=\"Vannes\"][\"population\"];" +
                         "rel[\"name\"=\"Vannes\"][\"population\"];-node[\"name\"=\"Vannes\"][\"historic\"];" +
-                        "-way[\"name\"=\"Vannes\"][\"historic\"];-rel[\"name\"=\"Vannes\"][\"historic\"];);",
+                        "way[\"name\"=\"Vannes\"][\"historic\"];rel[\"name\"=\"Vannes\"][\"historic\"];);",
                 shell.evaluate(set1+"-"+set2).toString());
 
         //Test operator
@@ -192,9 +186,9 @@ public class QueryTest {
         assertEquals("[out:csv(::\"id\",\"amenity\",\"contact:website\")];out;",
                 shell.evaluate("query() format csv(\"::id\", \"amenity\", \"contact:website\") out()").toString());
         assertEquals("[out:json][timeout:900][maxsize:1073741824];();out skel;",
-                shell.evaluate("query() format json timeout 900 maxsize 1073741824 dataSet set() out skel").toString());
+                shell.evaluate("query(set()) format json timeout 900 maxsize 1073741824 out skel").toString());
         assertEquals("[out:xml][bbox:25.0,6.02,28.68,7.85];();out;",
-                shell.evaluate("query().format(xml).bbox(25.0, 6.02, 28.68, 7.85).dataSet(set()).out()").toString());
+                shell.evaluate("query(set()).format(xml).bbox(25.0, 6.02, 28.68, 7.85).out()").toString());
 
         //Recurse tests
         assertEquals("<;",shell.evaluate("recurseUp()").toString());
@@ -217,8 +211,8 @@ public class QueryTest {
     @Test
     public void groovyQueryExecuteFileTest() {
         String filePath = "target/osm_data.json";
-        String badQuery = "query() format json timeout 900 maxsize 1073741824 dataSet set(node(\"\\\"\")) out skel execute ";
-        String query = "query() format json timeout 900 maxsize 1073741824 dataSet set() out skel execute ";
+        String badQuery = "query(set(node(\"\\\"\"))) format json timeout 900 maxsize 1073741824 out skel execute ";
+        String query = "query(set()) format json timeout 900 maxsize 1073741824 out skel execute ";
         //Create the file
         assertEquals(true, shell.evaluate(query + "\"" +filePath + "\""));
         assertTrue(new File(filePath).exists());
@@ -242,5 +236,4 @@ public class QueryTest {
         o = shell.evaluate(badQuery + "()");
         assertTrue(o instanceof InputStream);
     }
-    
 }

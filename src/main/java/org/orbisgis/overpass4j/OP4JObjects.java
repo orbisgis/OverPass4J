@@ -41,7 +41,7 @@ public class OP4JObjects {
 
     public static MapToArea map_to_area = new MapToArea();
 
-    public static Set set = new Set();
+    public static Set set = new Set("");
     public static ForEach foreach = new ForEach();
 
     public static Query query = new Query();

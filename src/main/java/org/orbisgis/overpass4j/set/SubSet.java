@@ -141,6 +141,8 @@ public abstract class SubSet extends Set{
                 return new Way(this.operator, this.bbox, this.filterList).setAlias(this.alias);
             case NODE:
                 return new Node(this.operator, this.bbox, this.filterList).setAlias(this.alias);
+            case AREA:
+                return new Area(this.operator, this.bbox, this.filterList).setAlias(this.alias);
         }
         return null;
     }

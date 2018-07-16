@@ -34,6 +34,7 @@ public class Node extends NRWSet {
         operator = Operator.UNION;
         this.bbox = null;
         identifiers = new int[]{identifier};
+        this.subSetList.add(this);
     }
 
     public Node(String ... filters){
@@ -55,6 +56,7 @@ public class Node extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Node(Operator operator, Bbox bbox, List<Filter> filterList){
@@ -64,6 +66,7 @@ public class Node extends NRWSet {
         for(Filter filter : filterList){
             this.filterList.add(filter.copy());
         }
+        this.subSetList.add(this);
     }
 
     public Node call(int identifier){

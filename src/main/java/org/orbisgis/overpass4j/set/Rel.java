@@ -33,6 +33,7 @@ public class Rel extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Rel(Bbox bbox, String ... filters){
@@ -42,6 +43,7 @@ public class Rel extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Rel(Operator operator, String ... filters){
@@ -50,6 +52,7 @@ public class Rel extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Rel(Operator operator, Bbox bbox, String ... filters){
@@ -59,6 +62,7 @@ public class Rel extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Rel(Operator operator, Bbox bbox, List<Filter> filterList){
@@ -68,6 +72,7 @@ public class Rel extends NRWSet {
         for(Filter filter : filterList){
             this.filterList.add(filter.copy());
         }
+        this.subSetList.add(this);
     }
 
     public Rel call(String ... filters){
