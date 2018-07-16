@@ -153,36 +153,43 @@ if(debug){
 }
 //Iterate on all the code
 i=1
+retryMax = 10
+List<String> error = new ArrayList<>()
 for ( String str : list ) {
-	if(debug){
-		stepDate=new Date()
+	if (debug) {
+		stepDate = new Date()
 	}
 
 	println "INSEE:$str  $i/${list.size}"
-	codeDate=new Date()
-	success = query()
-			.format(csv(first, "ref:INSEE","name","::count","::count:nodes","::count:ways","::count:relations"))
-			.maxsize(999999999)
-			.dataSet(
-			rel("ref:INSEE~${str}..", "admin_level=8"),
-			map_to_area(),
-			foreach(
-					query().dataSet(set(defaultSet("d"))).out(),
-					query(
-							set(
-									rel(bbox("area"),"building=yes", "building:levels>0"),
-									way(bbox("area"),"building=yes", "building:levels>0"),
-									node(bbox("area"),"building=yes", "building:levels>0")
-							)
-					).out(count)
-			)>>"d"
-	) execute file+".txt",true,false
+	retryCount = 0
+	success = false
+	codeDate = new Date()
+	while (!success && retryCount < retryMax) {
+		success = query(
+					rel("ref:INSEE~${str}..", "admin_level=8"),
+					map_to_area(),
+					foreach(
+						query(set("d")).out(),
+						query(
+							rel(bbox("area"), "building", "building:levels>0")+
+							way(bbox("area"), "building", "building:levels>0")+
+							node(bbox("area"), "building", "building:levels>0")
+						).out(count)
+					) >> "d"
+				)
+				.format(csv(first, "ref:INSEE", "name", "::count", "::count:nodes", "::count:ways", "::count:relations"))
+				.execute(file + ".txt", true, false)
 
-	if(!success){
-		println "Error on code ${str}XX."
-	}
-	else{
-		first = false
+		if (!success) {
+			retryCount++
+			println "Error on code ${str}XX, retrying $retryCount/$retryMax"
+			if(retryCount>=retryMax){
+				error.add(str)
+			}
+
+		} else {
+			first = false
+		}
 	}
 	if(debug){
 		use(TimeCategory) {
@@ -200,6 +207,7 @@ if(debug){
 	}
 }
 
+println "Error on codes : $error"
 //End script and format output
 println "Start reformat."
 formatOutCsv(file+".txt", file+".csv")

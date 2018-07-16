@@ -170,12 +170,13 @@ public class QueryTest {
         String compFilter = "node(bbox(47, -3, 48, -2), \"building:levels>=3\", \"building:levels<5\")";
         assertEquals("node(if:t[\"building:levels\"]>=3)(if:t[\"building:levels\"]<5)(47.0,-3.0,48.0,-2.0);",
                 shell.evaluate(compFilter).toString());
-        compFilter = "node(bbox(47, -3, 48, -2), \"building:levels > 3\", \"building:levels<=5\")";
-        assertEquals("node(if:t[\"building:levels\"]>3)(if:t[\"building:levels\"]<=5)(47.0,-3.0,48.0,-2.0);",
+        compFilter = compFilter+"+node(bbox(47, -3, 48, -2), \"building:levels > 3\", \"building:levels<=5\")";
+        assertEquals("(node(if:t[\"building:levels\"]>=3)(if:t[\"building:levels\"]<5)(47.0,-3.0,48.0,-2.0);" +
+                        "node(if:t[\"building:levels\"]>3)(if:t[\"building:levels\"]<=5)(47.0,-3.0,48.0,-2.0););",
                 shell.evaluate(compFilter).toString());
 
         //Test set
-        String set = "set("+node+","+way+","+rel+","+area+");";
+        String set = node+"+"+way+"+"+rel+"+"+area;
         assertEquals("(node[\"name\"=\"Vannes\"][\"population\"](47.0,-3.0,48.0,-2.0);" +
                 "way[\"name\"=\"Vannes\"][\"website\"](47.0,-3.0,48.0,-2.0);" +
                 "rel[\"name\"=\"Vannes\"][\"capital\"](47.0,-3.0,48.0,-2.0);" +
@@ -211,7 +212,7 @@ public class QueryTest {
     @Test
     public void groovyQueryExecuteFileTest() {
         String filePath = "target/osm_data.json";
-        String badQuery = "query(set(node(\"\\\"\"))) format json timeout 900 maxsize 1073741824 out skel execute ";
+        String badQuery = "query(set(\"\\\"\")) format json timeout 900 maxsize 1073741824 out skel execute ";
         String query = "query(set()) format json timeout 900 maxsize 1073741824 out skel execute ";
         //Create the file
         assertEquals(true, shell.evaluate(query + "\"" +filePath + "\""));

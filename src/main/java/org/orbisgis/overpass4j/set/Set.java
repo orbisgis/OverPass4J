@@ -81,7 +81,7 @@ public class Set {
     public String toString(){
         StringBuilder str = new StringBuilder("(");
         if(subSetAlias != null && !subSetAlias.isEmpty()){
-            str.append("\"").append(subSetAlias).append("\"");
+            str.append(".").append(subSetAlias).append(";");
         }
         else if(subSetList != null){
             for (SubSet subSet : subSetList) {
@@ -110,5 +110,9 @@ public class Set {
 
     public Set call(SubSet... subSets){
         return new Set(subSets);
+    }
+
+    public Set call(String subSetAlias){
+        return new Set(subSetAlias);
     }
 }
