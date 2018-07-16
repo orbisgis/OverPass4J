@@ -451,7 +451,7 @@ println(new File("/tmp/fileOSM.csv").text);
   ```
 # Funding
 
-Overpass4J isdeveloped within the following frameworks :
+Overpass4J is developed within the following frameworks :
 
 
 * PAENDORA (Planification, Adaptation et Energie des DOnnées territoriales et Accompagnement, 2017-2020), ADEME Programme: MODEVAL-URBA 2017
