@@ -449,3 +449,11 @@ request = query() format csv("ref:INSEE","name","::count","::count:nodes","::cou
 
 println(new File("/tmp/fileOSM.csv").text);  
   ```
+# Funding
+
+Overpass4J isdeveloped within the following frameworks :
+
+
+* PAENDORA (Planification, Adaptation et Energie des DOnnées territoriales et Accompagnement, 2017-2020), ADEME Programme: MODEVAL-URBA 2017
+
+* URCLIM  (URban CLIMate services, 2017-2020), JPI Climate Programme (http://www.jpi-climate.eu/nl/25223460-URCLIM.html)
