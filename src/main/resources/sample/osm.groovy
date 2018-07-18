@@ -117,8 +117,13 @@ if(opt.d){
 		}
 	}
 	for(String str : tmp) {
-		for (j = 0; j < 10; j++) {
-			list.add(str+j)
+		for (j = 0; j < 100; j++) {
+			if(j<10) {
+				list.add(str + "0" + j)
+			}
+			else{
+				list.add(str + j)
+			}
 		}
 	}
 }
@@ -128,17 +133,32 @@ if(list.isEmpty()) {
 		dep = ""
 		if (i == 2) {
 			dep = "2A"
-			for(j=0; j<10; j++){
-				list.add(dep+j)
+			for(j=0; j<100; j++){
+				if(j<10) {
+					list.add(dep + "0" + j)
+				}
+				else{
+					list.add(dep + j)
+				}
 			}
 			dep = "2B"
-			for(j=0; j<10; j++){
-				list.add(dep+j)
+			for(j=0; j<100; j++){
+				if(j<10) {
+					list.add(dep + "0" + j)
+				}
+				else{
+					list.add(dep + j)
+				}
 			}
 		}
 		dep = i < 10 ? "0$i" : "$i"
-		for(j=0; j<10; j++){
-			list.add(dep+j)
+		for(j=0; j<100; j++){
+			if(j<10) {
+				list.add(dep + "0" + j)
+			}
+			else{
+				list.add(dep + j)
+			}
 		}
 	}
 }
@@ -160,24 +180,23 @@ for ( String str : list ) {
 		stepDate = new Date()
 	}
 
-	println "INSEE:$str  $i/${list.size}"
+	println "INSEE:${str}X  $i/${list.size}"
 	retryCount = 0
 	success = false
 	codeDate = new Date()
 	while (!success && retryCount < retryMax) {
 		success = query(
-					rel("ref:INSEE~${str}..", "admin_level=8"),
+					rel("ref:INSEE~${str}.", "admin_level=8"),
 					map_to_area(),
 					foreach(
 						query(set("d")).out(),
 						query(
-							rel(bbox("area"), "building", "building:levels>0")+
-							way(bbox("area"), "building", "building:levels>0")+
-							node(bbox("area"), "building", "building:levels>0")
+								way(bbox("area.d"), "building", "building:levels>0")+
+								rel(bbox("area.d"), "building", "building:levels>0")
 						).out(count)
 					) >> "d"
 				)
-				.format(csv(first, "ref:INSEE", "name", "::count", "::count:nodes", "::count:ways", "::count:relations"))
+				.format(csv(first, "ref:INSEE", "name", "::count", "::count:ways", "::count:relations"))
 				.execute(file + ".txt", true, false)
 
 		if (!success) {
@@ -202,7 +221,7 @@ for ( String str : list ) {
 
 if(debug){
 	use(TimeCategory) {
-		def duration = new Date()-stepDate
+		def duration = new Date()-startDate
 		println "End, script last ${String.format("%02d",duration.hours)}:${String.format("%02d",duration.minutes)}:${String.format("%02d",duration.seconds)}"
 	}
 }
