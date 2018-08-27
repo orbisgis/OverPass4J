@@ -32,7 +32,6 @@ public abstract class SubSet extends Set{
     protected Operator operator;
     protected List<Filter> filterList = new ArrayList<>();
     protected Bbox bbox;
-    protected String alias;
     private static String[] RECURSE_TAGS = new String[]{"n", "w", "r", "bn", "bw", "br"};
 
     public Operator getOperator(){

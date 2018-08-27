@@ -79,6 +79,10 @@ public class Rel extends NRWSet {
         return new Rel(filters);
     }
 
+    public Rel call(String filter){
+        return new Rel(filter);
+    }
+
     public Rel call(Bbox bbox, String ... filters){
         return new Rel(bbox, filters);
     }

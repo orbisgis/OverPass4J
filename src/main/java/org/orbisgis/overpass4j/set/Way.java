@@ -79,6 +79,10 @@ public class Way extends NRWSet {
         return new Way(filters);
     }
 
+    public Way call(String filter){
+        return new Way(filter);
+    }
+
     public Way call(Bbox bbox, String ... filters){
         return new Way(bbox, filters);
     }
