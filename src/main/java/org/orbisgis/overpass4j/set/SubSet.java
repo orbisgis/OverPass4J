@@ -32,7 +32,6 @@ public abstract class SubSet extends Set{
     protected Operator operator;
     protected List<Filter> filterList = new ArrayList<>();
     protected Bbox bbox;
-    protected String alias;
     private static String[] RECURSE_TAGS = new String[]{"n", "w", "r", "bn", "bw", "br"};
 
     public Operator getOperator(){
@@ -141,6 +140,8 @@ public abstract class SubSet extends Set{
                 return new Way(this.operator, this.bbox, this.filterList).setAlias(this.alias);
             case NODE:
                 return new Node(this.operator, this.bbox, this.filterList).setAlias(this.alias);
+            case AREA:
+                return new Area(this.operator, this.bbox, this.filterList).setAlias(this.alias);
         }
         return null;
     }

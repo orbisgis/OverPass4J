@@ -31,15 +31,25 @@ import java.nio.charset.StandardCharsets;
  */
 public class Query {
 
-    private static String DEFAULT_SERVER_URL = "http://overpass-api.de/api/interpreter?data=";
+    private static String DEFAULT_SERVER_URL = "https://lz4.overpass-api.de/api/interpreter?data=";
 
     private String serverUrl = DEFAULT_SERVER_URL;
     private OutFormat format;
     private int timeout = -1;
     private int maxsize = -1;
-    private Set[] dataSet;
+    private Set[] body;
     private String[] outs;
     private Bbox bbox;
+
+    public Query(){}
+
+    public Query(Set set){
+        body = new Set[]{set};
+    }
+
+    public Query(Set[] sets){
+        body = sets;
+    }
 
     public Query format(OutFormat format) {
         this.format = format;
@@ -56,9 +66,11 @@ public class Query {
     }
 
     public Query call(Set set) {
-        Query query = new Query();
-        query.dataSet(set);
-        return query;
+        return new Query(set);
+    }
+
+    public Query call(Set[] sets) {
+        return new Query(sets);
     }
 
     public Query timeout(int timeout) {
@@ -68,11 +80,6 @@ public class Query {
 
     public Query maxsize(int maxsize) {
         this.maxsize = maxsize;
-        return this;
-    }
-
-    public Query dataSet(Set... set) {
-        this.dataSet = set;
         return this;
     }
 
@@ -112,8 +119,8 @@ public class Query {
         if (str.length() > 0) {
             str.append(";");
         }
-        if(dataSet != null) {
-            for (Set set : dataSet) {
+        if(body != null) {
+            for (Set set : body) {
                 str.append(set.toString());
             }
         }
@@ -139,7 +146,11 @@ public class Query {
      * @throws IOException Exception thrown in case of error during the http request.
      */
     public boolean execute(String filePath) throws IOException {
-        return execute(filePath, true);
+        return execute(filePath, true, DEFAULT_SERVER_URL);
+    }
+
+    public boolean execute(String filePath, boolean append) throws IOException {
+        return execute(filePath, append, DEFAULT_SERVER_URL);
     }
 
 
@@ -154,8 +165,7 @@ public class Query {
      * @throws IOException Exception thrown in case of error during the http request.
      */
     public boolean execute(String filePath, String serverUrl) throws IOException {
-        this.serverUrl = serverUrl;
-        return execute(filePath, true);
+        return execute(filePath, true,serverUrl);
     }
 
 
@@ -172,7 +182,12 @@ public class Query {
      */
     public boolean execute(String filePath, boolean append, String serverUrl) throws IOException {
         this.serverUrl = serverUrl;
-        return execute(filePath, append);
+        return execute(filePath, append, true);
+    }
+
+    public boolean execute(String filePath, boolean append, String serverUrl, boolean writeError) throws IOException {
+        this.serverUrl = serverUrl;
+        return execute(filePath, append, writeError);
     }
 
     /**
@@ -185,7 +200,7 @@ public class Query {
      *
      * @throws IOException Exception thrown in case of error during the http request.
      */
-    public boolean execute(String filePath, boolean append) throws IOException {
+    public boolean execute(String filePath, boolean append, boolean writeError) throws IOException {
         File file = new File(filePath);
         URL url = new URL(serverUrl + URLEncoder.encode(this.toString(), StandardCharsets.UTF_8.toString()));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -203,7 +218,7 @@ public class Query {
             outStream.close();
             return true;
         }
-        else{
+        else if(writeError){
             OutputStream outStream = new FileOutputStream(file, append);
             byte[] buffer = new byte[8 * 1024];
             int bytesRead;
@@ -212,6 +227,9 @@ public class Query {
             }
             connection.getErrorStream().close();
             outStream.close();
+            return false;
+        }
+        else{
             return false;
         }
     }

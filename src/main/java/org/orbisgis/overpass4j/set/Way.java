@@ -33,6 +33,7 @@ public class Way extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Way(Bbox bbox, String ... filters){
@@ -42,6 +43,7 @@ public class Way extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Way(Operator operator, String ... filters){
@@ -50,6 +52,7 @@ public class Way extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Way(Operator operator, Bbox bbox, String ... filters){
@@ -59,6 +62,7 @@ public class Way extends NRWSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Way(Operator operator, Bbox bbox, List<Filter> filterList){
@@ -68,10 +72,15 @@ public class Way extends NRWSet {
         for(Filter filter : filterList){
             this.filterList.add(filter.copy());
         }
+        this.subSetList.add(this);
     }
 
     public Way call(String ... filters){
         return new Way(filters);
+    }
+
+    public Way call(String filter){
+        return new Way(filter);
     }
 
     public Way call(Bbox bbox, String ... filters){

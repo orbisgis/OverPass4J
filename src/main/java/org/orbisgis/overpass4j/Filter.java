@@ -16,6 +16,8 @@
  */
 package org.orbisgis.overpass4j;
 
+import static org.orbisgis.overpass4j.Filter.Operator.*;
+
 /**
  * @author Sylvain PALOMINOS (UBS 2018)
  * @author Erwan Bocher (CNRS)
@@ -27,6 +29,12 @@ public class Filter {
     private Operator operator;
 
     public enum Operator{EQUALS, NOT_EQUALS, EXISTS, NOT_EXISTS, REGEX, NOT_REGEX, SUP, SUP_EQ, INF, INF_EQ}
+
+    private Filter(Operator op, String key, String value){
+        this.operator = op;
+        this.key = key;
+        this.value = value;
+    }
 
     public Filter(String filterStr){
         if(filterStr.contains("!=")){
@@ -52,22 +60,22 @@ public class Filter {
         else if(filterStr.contains(">=")){
             key = filterStr.split(">=")[0].replaceAll("\"", "");
             value = filterStr.split(">=")[1].replaceAll("\"", "");
-            operator = Operator.SUP_EQ;
+            operator = SUP_EQ;
         }
         else if(filterStr.contains(">")){
             key = filterStr.split(">")[0].replaceAll("\"", "");
             value = filterStr.split(">")[1].replaceAll("\"", "");
-            operator = Operator.SUP;
+            operator = SUP;
         }
         else if(filterStr.contains("<=")){
             key = filterStr.split("<=")[0].replaceAll("\"", "");
             value = filterStr.split("<=")[1].replaceAll("\"", "");
-            operator = Operator.INF_EQ;
+            operator = INF_EQ;
         }
         else if(filterStr.contains("<")){
             key = filterStr.split("<")[0].replaceAll("\"", "");
             value = filterStr.split("<")[1].replaceAll("\"", "");
-            operator = Operator.INF;
+            operator = INF;
         }
         else if(filterStr.contains("=")){
             key = filterStr.split("=")[0].replaceAll("\"", "");
@@ -106,6 +114,6 @@ public class Filter {
     }
 
     public Filter copy(){
-        return new Filter(this.toString().replaceAll("[\\[\\]]", ""));
+        return new Filter(operator, key, value);
     }
 }

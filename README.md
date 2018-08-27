@@ -55,12 +55,10 @@ new Set(
 ```
 ###### Groovy
 ```groovy
-set(
-    node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population")
-    way(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "website")
-    rel(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "capital")
-    area(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "historic")
-)
+node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population") +
+way(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "website") +
+rel(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "capital") +
+area(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "historic")
 ```
 
 ### Input set
@@ -95,13 +93,13 @@ new DefaultSet(set); /** or **/ new DefaultSet("a");
 ```
 ###### Groovy
 ```groovy
-set(node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population"))>>"a"
+node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population")>>"a"
 //Both following set are store as the default input set.
-set(node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population"))>>"_"
-set(node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population"))
+node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population")>>"_"
+node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population")
 
 //Store the set named 'a' as the default set
-set = set(node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population"))>>"a"
+set = node(bbox(47.0,-3.0,48.0,-2.0),"name=Vannes", "population")>>"a"
 defaultSet(set); /** or **/defaultSet("a")
 ```
 
@@ -314,15 +312,15 @@ out
 ```
 ###### Java
 ```java
-new Query().format(new JsonOutFormat()).timeout(900).maxsize(1073741824).dataSet(...).out(Out.skel);
-new Query().format(new JsonOutFormat()).dataSet(...)
-new Query().format(new CsvOutFormat("::id", "amenity", "contact:website")).dataSet(...)
+new Query(...).format(new JsonOutFormat()).timeout(900).maxsize(1073741824).out(Out.skel);
+new Query(...).format(new JsonOutFormat())
+new Query(...).format(new CsvOutFormat("::id", "amenity", "contact:website"))
 ```
 ###### Groovy
 ```groovy
-query() format json timeout 900 maxsize 1073741824 dataSet set(...) out skel
-query() format json dataSet set(...)
-query() format csv("::id", "amenity", "contact:website") dataSet set(...)
+query(...) format json timeout 900 maxsize 1073741824 out skel
+query(...) format json
+query(...) format csv("::id", "amenity", "contact:website")
 ```
  
  ### Execution
@@ -334,11 +332,11 @@ query() format csv("::id", "amenity", "contact:website") dataSet set(...)
  
  ###### Java
  ```java
- new Query(). ... .execute("path/of/the/file")
+ new Query(...). ... .execute("path/of/the/file")
  ```
  ###### Groovy
  ```groovy
- query() ... execute "path/of/the/file"
+ query(...) ... execute "path/of/the/file"
  ```
  
  ### Full request example
@@ -353,19 +351,21 @@ out meta;
  ```
  ###### Java
  ```java
- new Query().format(new JsonOutFormat())
+ new Query(
+         new Node(new Bbox(51.15,7.0,51.35,7.3))
+         .plus(new Rel("boundary=postal_code", "postal_code=65343")))
+    .format(new JsonOutFormat())
     .timeout(900)
     .maxsize(1073741824)
-    .dataSet(new Set(new Node(new Bbox(51.15,7.0,51.35,7.3)), new Rel("boundary=postal_code", "postal_code=65343")))
     .out(Out.meta)
     .execute("path/of/the/file")
  ```
  ###### Groovy
  ```groovy
- query() format json 
+ query(node(bbox(51.15,7.0,51.35,7.3)) + ("boundary=postal_code", "postal_code=65343"))
+    format json 
     timeout 900 
     maxsize 1073741824 
-    dataSet set(node(bbox(51.15,7.0,51.35,7.3)),rel("boundary=postal_code", "postal_code=65343")) 
     out meta 
     execute "path/of/the/file"
  ```
@@ -384,7 +384,7 @@ import static  org.orbisgis.overpass4j.OP4JObjects.*
 def bbox_osm= bbox(47.65799702121347,-2.756415009498596,47.65963017480206,-2.7535852789878845)
 
 //Get road features
-query() format json timeout 900 dataSet set(way(bbox_osm,"highway")) out meta execute "/tmp/fileOSM.json"
+query(way(bbox_osm,"highway")) format json timeout 900 out meta execute "/tmp/fileOSM.json"
 println(new File("/tmp/fileOSM.json").text);
  ```
  
@@ -400,7 +400,7 @@ import static  org.orbisgis.overpass4j.OP4JObjects.*
 def bbox_osm= bbox(47.65799702121347,-2.756415009498596,47.65963017480206,-2.7535852789878845)
 
 //Count the number of buildings for a specific area 
-request = query() format csv("::count", "::count:nodes", "::count:ways", "::count:relations") timeout 900 dataSet set(node(bbox_osm,"building=yes"),way(bbox_osm,"building=yes"),rel(bbox_osm,"building=yes")) out count execute "/tmp/fileOSM.csv"
+request = query(node(bbox_osm,"building=yes")+way(bbox_osm,"building=yes")+rel(bbox_osm,"building=yes")) format csv("::count", "::count:nodes", "::count:ways", "::count:relations") timeout 900 out count execute "/tmp/fileOSM.csv"
 println(new File("/tmp/fileOSM.csv").text);
  ```
   This example shows how to count all node, way and relation buildings with a level tag greater than 0.

@@ -35,6 +35,7 @@ public class Area extends SubSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Area(Bbox bbox, String ... filters){
@@ -44,6 +45,7 @@ public class Area extends SubSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Area(Operator operator, String ... filters){
@@ -52,6 +54,7 @@ public class Area extends SubSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
     }
 
     public Area(Operator operator, Bbox bbox, String ... filters){
@@ -61,6 +64,17 @@ public class Area extends SubSet {
         for(String str : filters){
             filterList.add(new Filter(str));
         }
+        this.subSetList.add(this);
+    }
+
+    public Area(Operator operator, Bbox bbox, List<Filter> filterList){
+        this.objectType = ObjectType.AREA;
+        this.operator =operator;
+        this.bbox = bbox;
+        for(Filter filter : filterList){
+            this.filterList.add(filter.copy());
+        }
+        this.subSetList.add(this);
     }
 
     public Area call(String ... filters){
