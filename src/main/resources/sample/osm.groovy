@@ -44,7 +44,7 @@ def formatOutCsv(fileIn, fileOut){
 		new File(fileIn).eachLine { line ->
 			if(!first){
 				if(!prevLine.empty){
-					w << prevLine.replaceAll("\t\t\t\t", "")+line.replaceAll("\t\t", "\t")+"\n"
+					w << prevLine.replaceAll("\t\t\t", "")+line.replaceAll("\t\t", "\t")+"\n"
 					prevLine=""
 				}
 				else{
